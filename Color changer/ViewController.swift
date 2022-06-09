@@ -18,6 +18,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var redValueLabel: UILabel!
     @IBOutlet weak var greenValueLabel: UILabel!
     @IBOutlet weak var blueValueLabel: UILabel!
+    @IBOutlet weak var redTextfield: UITextField!
+    @IBOutlet weak var greenTextfield: UITextField!
+    @IBOutlet weak var blueTextfield: UITextField!
     
     // MARK: - Life cycle
     
@@ -31,6 +34,8 @@ class ViewController: UIViewController {
         blueSliderSet()
         setValueLabel()
         changeColor()
+        
+        addButtonOnKeyboard()
     }
     
     // MARK: - IBActions
@@ -48,6 +53,8 @@ class ViewController: UIViewController {
     @IBAction func changeOfBlue(_ sender: UISlider) {
         blueValueLabel.text = String(format: "%.0f", sender.value)
         changeColor()
+        
+        
     }
     
     // MARK: - Private Methods
@@ -56,18 +63,21 @@ class ViewController: UIViewController {
         redSlider.setValue(100, animated: true)
         redSlider.maximumValue = 255
         redSlider.minimumTrackTintColor = .red
+        redTextfield.text = redValueLabel.text
     }
     
     private func greenSliderSet() {
         greenSlider.setValue(144, animated: true)
         greenSlider.maximumValue = 255
         greenSlider.minimumTrackTintColor = .green
+        greenTextfield.text = greenValueLabel.text
     }
     
     private func blueSliderSet() {
         blueSlider.setValue(235, animated: true)
         blueSlider.maximumValue = 255
         blueSlider.minimumTrackTintColor = .blue
+        blueTextfield.text = blueValueLabel.text
     }
     
     private func setValueLabel() {
@@ -79,6 +89,44 @@ class ViewController: UIViewController {
     private func changeColor() {
         colorMonitor.backgroundColor = UIColor(red: CGFloat(redSlider.value)/255, green: CGFloat(greenSlider.value)/255, blue: CGFloat(blueSlider.value)/255, alpha: 1)
     }
-
 }
 
+extension ViewController: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        
+    }
+}
+
+// MARK: - Keyboard settings
+
+extension ViewController {
+    private func addButtonOnKeyboard() {
+        let doneToolbar = UIToolbar(frame: CGRect(x: 0,
+                                                  y: 0,
+                                                  width: UIScreen.main.bounds.width,
+                                                  height: 50))
+        doneToolbar.barStyle = .default
+        
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
+                                            target: nil,
+                                            action: nil)
+        let done = UIBarButtonItem(title: "Done",
+                                   style: .done,
+                                   target: self, action: #selector(self.doneButtonAction))
+        
+        let items = [flexibleSpace, done]
+        flexibleSpace.width = UIScreen.main.bounds.width - done.width
+        doneToolbar.items = items
+        doneToolbar.sizeToFit()
+        
+        redTextfield.inputAccessoryView = doneToolbar
+        greenTextfield.inputAccessoryView = doneToolbar
+        blueTextfield.inputAccessoryView = doneToolbar
+    }
+    
+    @objc func doneButtonAction() {
+        redTextfield.resignFirstResponder()
+        greenTextfield.resignFirstResponder()
+        blueTextfield.resignFirstResponder()
+    }
+}
