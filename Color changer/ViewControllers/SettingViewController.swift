@@ -10,7 +10,7 @@ import UIKit
 
 
 class SettingViewController: UIViewController {
-
+    
     // MARK: - IBOutlets
     
     @IBOutlet var colorMonitor: UIView!
@@ -50,8 +50,6 @@ class SettingViewController: UIViewController {
         blueSliderSet()
         setValueLabel()
         setTextFields()
-        
-        addButtonOnKeyboard()
     }
     
     // MARK: - IBActions
@@ -140,6 +138,31 @@ class SettingViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension SettingViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let doneToolbar = UIToolbar()
+        doneToolbar.barStyle = .default
+        
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
+                                            target: nil,
+                                            action: nil)
+        let done = UIBarButtonItem(title: "Done",
+                                   style: .done,
+                                   target: self, action: #selector(self.doneButtonAction))
+        
+        let items = [flexibleSpace, done]
+        flexibleSpace.width = UIScreen.main.bounds.width - done.width
+        doneToolbar.items = items
+        doneToolbar.sizeToFit()
+        
+        textField.inputAccessoryView = doneToolbar
+    }
+    
+    @objc func doneButtonAction() {
+        redTF.resignFirstResponder()
+        greenTF.resignFirstResponder()
+        blueTF.resignFirstResponder()
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         checkNumber(textField)
@@ -160,44 +183,10 @@ extension SettingViewController: UITextFieldDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         self.view.endEditing(true)
     }
 }
-
-// MARK: - Keyboard settings
-
-extension SettingViewController {
-    private func addButtonOnKeyboard() {
-        let doneToolbar = UIToolbar(frame: CGRect(x: 0,
-                                                  y: 0,
-                                                  width: UIScreen.main.bounds.width,
-                                                  height: 50))
-        doneToolbar.barStyle = .default
-        
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
-                                            target: nil,
-                                            action: nil)
-        let done = UIBarButtonItem(title: "Done",
-                                   style: .done,
-                                   target: self, action: #selector(self.doneButtonAction))
-        
-        let items = [flexibleSpace, done]
-        flexibleSpace.width = UIScreen.main.bounds.width - done.width
-        doneToolbar.items = items
-        doneToolbar.sizeToFit()
-        
-        redTF.inputAccessoryView = doneToolbar
-        greenTF.inputAccessoryView = doneToolbar
-        blueTF.inputAccessoryView = doneToolbar
-    }
-    
-    @objc func doneButtonAction() {
-        redTF.resignFirstResponder()
-        greenTF.resignFirstResponder()
-        blueTF.resignFirstResponder()
-    }
-}
-
 // MARK: - Alert Controller
 
 extension SettingViewController {
